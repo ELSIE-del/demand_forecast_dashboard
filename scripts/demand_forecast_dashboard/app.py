@@ -23,6 +23,11 @@ if uploaded_file:
         df['Date'] = pd.to_datetime(df['Date'])
         fig, ax = plt.subplots()
         ax.plot(df['Date'], df['Forecast'], label='Forecast')
+        
+        # Overlay risk points
+        risk_points = df[df['risk_flag'] == 1]
+        ax.scatter(risky_points['Date'], risky_points['Forecast'], color='red',label='Risk', zorder = 5)
+        
         ax.set_title("Forecast Over Time")
         ax.set_xlabel("Date")
         ax.set_ylabel("Forecast")
