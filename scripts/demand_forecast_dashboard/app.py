@@ -26,7 +26,7 @@ if uploaded_file:
         
         # Overlay risk points
         risk_points = df[df['risk_flag'] == 1]
-        ax.scatter(risky_points['Date'], risky_points['Forecast'], color='red',label='Risk', zorder = 5)
+        ax.scatter(risk_points['Date'], risk_points['Forecast'], color='red',label='Risk', zorder = 5)
         
         ax.set_title("Forecast Over Time")
         ax.set_xlabel("Date")
