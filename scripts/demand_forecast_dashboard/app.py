@@ -33,6 +33,16 @@ if uploaded_file:
         ax.set_ylabel("Forecast")
         ax.legend()
         st.pyplot(fig)
+
+        # Offer download of processed data
+        st.subheader("Download Forecast Data")
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="📥 Download CSV",
+            data=csv,
+            file_name="forecast_with_risk.csv",
+            mime="text/csv"
+        )
     else:
         st.warning("Make sure your CSV has 'Date' and 'Forecast' columns.")
 else:
