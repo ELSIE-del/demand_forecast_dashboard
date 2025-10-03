@@ -15,6 +15,9 @@ if uploaded_file:
     st.subheader("Preview of Uploaded Data")
     st.dataframe(df.head())
 
+    # Rename columns to match expected format
+    df.rename(columns={'date': 'Date', 'demand': 'Forecast'}, inplace=True)
+
     # Basic plot
     if 'Date' in df.columns and 'Forecast' in df.columns:
         df['Date'] = pd.to_datetime(df['Date'])
