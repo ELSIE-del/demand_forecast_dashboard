@@ -41,7 +41,12 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file)
     
     # Rename columns to match expected format
-    df.rename(columns={'date': 'Date', 'demand': 'Forecast'}, inplace=True)
+    df.rename(columns={'date': 'Date', 
+                       'demand': 'Forecast',
+                       'Invento': 'inventory_level',
+                       'supplier': 'supplier_score',
+                       'delay_in_days': 'delay_days'
+                       }, inplace=True)
 
     # Basic plot
     df['Date'] = pd.to_datetime(df['Date'])
@@ -74,13 +79,15 @@ if uploaded_file:
        
     with tab1:
         st.subheader("Forecast Over Time with Confidence Interval")
+    if filtered_df.empty:
+        st.info("No forecast data to display.Try adjusting filters.")    
         fig, ax = plt.subplots()
-        ax.plot(df['Date'], df['Forecast'], label='Forecast', color='blue')
+        ax.plot(filtered_df['Date'], filtered_df['Forecast'], label='Forecast', color='blue')
         
         # Confidence interval band (±20 units)
-        lower_bound = df['Forecast'] - 20
-        upper_bound = df['Forecast'] + 20
-        ax.fill_between(df['Date'], lower_bound, upper_bound, color='blue', alpha=0.2, label='Confidence Interval')
+        lower_bound = filtered_df['Forecast'] - 20
+        upper_bound = filtered_df['Forecast'] + 20
+        ax.fill_between(filtered_df['Date'], lower_bound, upper_bound, color='blue', alpha=0.2, label='Confidence Interval')
        
         ax.set_title("Forecast Over Time")
         ax.set_xlabel("Date")
