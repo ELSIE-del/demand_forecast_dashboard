@@ -30,11 +30,11 @@ with st.expander("🧭 How to Use This Dashboard"):
 # Sidebar filters
 st.sidebar.header("🔍 Filter Options")
 
-start_date = st.sidebar.date_input("Start Date")
-end_date = st.sidebar.date_input("End Date")
+start_date = st.sidebar.date_input("2025-10-19")
+end_date = st.sidebar.date_input("2026-10-19")
 
-min_score = st.sidebar.slider("Minimum Supplier Score", 0.0, 1.0, 0.5)
-max_delay = st.sidebar.slider("Max Delivery Delay (days)", 0, 30, 10)
+min_score = st.sidebar.slider("Minimum Supplier Score", 0.0, 10.0, 5.0)
+max_delay = st.sidebar.slider("Max Delivery Delay (days)", 0, 30, 15)
 uploaded_file = st.file_uploader("Upload your forecast CSV", type=["csv"])
 
 if uploaded_file:
