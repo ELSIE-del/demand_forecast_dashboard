@@ -57,10 +57,15 @@ if uploaded_file:
 
     with tab2:
         st.subheader("Risk Overlay")
+        show_risks = st.checkbox("Show Risk Markers", value=True)
+
         fig, ax = plt.subplots()
         ax.plot(df['Date'], df['Forecast'], label='Forecast', color='blue')
-        risk_points = df[df['risk_flag'] == 1]    
-        ax.scatter(risk_points['Date'], risk_points['Forecast'], color='red',label='Risk', zorder=5)
+        
+        if show_risks:
+            risk_points = df[df['risk_flag'] == 1]    
+            ax.scatter(risk_points['Date'], risk_points['Forecast'], color='red',label='Risk', zorder=5)
+       
         ax.set_title("Risk-Flagged Forecast")    
         ax.set_xlabel("Date")
         ax.set_ylabel("Forecast")
