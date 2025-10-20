@@ -46,6 +46,18 @@ if uploaded_file:
     # Basic plot
     df['Date'] = pd.to_datetime(df['Date'])
 
+    # 🔍 Diagnostic checks
+    st.write("Column types:") 
+    st.write(df.dtypes)
+
+    st.write("Date range in data:")
+    st.write(f"{df['Date'].min()} to {df['Date'].max()}")
+
+    st.write("Supplier score range:")
+    st.write(df['supplier_score'].describe())
+
+    st.write("Delay days range:")
+    st.write(df['delay_days'].describe())
     # Apply filters from sidebar
     filtered_df = df[
       (df['Date'] >= pd.to_datetime(start_date)) &
@@ -63,12 +75,12 @@ if uploaded_file:
     with tab1:
         st.subheader("Forecast Over Time with Confidence Interval")
         fig, ax = plt.subplots()
-        ax.plot(filtered_df['Date'], filtered_df['Forecast'], label='Forecast', color='blue')
+        ax.plot(df['Date'], df['Forecast'], label='Forecast', color='blue')
         
         # Confidence interval band (±20 units)
-        lower_bound = filtered_df['Forecast'] - 20
-        upper_bound = filtered_df['Forecast'] + 20
-        ax.fill_between(filtered_df['Date'], lower_bound, upper_bound, color='blue', alpha=0.2, label='Confidence Interval')
+        lower_bound = df['Forecast'] - 20
+        upper_bound = df['Forecast'] + 20
+        ax.fill_between(df['Date'], lower_bound, upper_bound, color='blue', alpha=0.2, label='Confidence Interval')
        
         ax.set_title("Forecast Over Time")
         ax.set_xlabel("Date")
