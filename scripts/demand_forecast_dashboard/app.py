@@ -30,8 +30,8 @@ with st.expander("🧭 How to Use This Dashboard"):
 # Sidebar filters
 st.sidebar.header("🔍 Filter Options")
 
-start_date = st.sidebar.date_input("2025-10-19")
-end_date = st.sidebar.date_input("2026-10-19")
+start_date = st.sidebar.date_input("Start Date",value=pd.to_datetime("2025-10-19").date())
+end_date = st.sidebar.date_input("End Date",value=pd.to_datetime("2026-10-19").date())
 
 min_score = st.sidebar.slider("Minimum Supplier Score", 0.0, 10.0, 5.0)
 max_delay = st.sidebar.slider("Max Delivery Delay (days)", 0, 30, 15)
@@ -53,6 +53,8 @@ if uploaded_file:
       (df['supplier_score'] >= min_score) &
       (df['delay_days'] <= max_delay)
     ]
+    st.write(f"Filtered records: {len(filtered_df)}")
+    st.dataframe(filtered_df.head())
     if filtered_df.empty:
         st.warning("⚠️ No data matches the current filters. Try adjusting the sliders or date range.")
 
