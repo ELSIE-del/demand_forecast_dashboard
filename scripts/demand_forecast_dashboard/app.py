@@ -26,7 +26,15 @@ with st.expander("🧭 How to Use This Dashboard"):
     **Step 3:** Click **Download CSV** to export your processed data
     """)
            
-# File uploader
+
+# Sidebar filters
+st.sidebar.header("🔍 Filter Options")
+
+start_date = st.sidebar.date_input("Start Date")
+end_date = st.sidebar.date_input("End Date")
+
+min_score = st.sidebar.slider("Minimum Supplier Score", 0.0, 1.0, 0.5)
+max_delay = st.sidebar.slider("Max Delivery Delay (days)", 0, 30, 10)
 uploaded_file = st.file_uploader("Upload your forecast CSV", type=["csv"])
 
 if uploaded_file:
@@ -37,18 +45,27 @@ if uploaded_file:
 
     # Basic plot
     df['Date'] = pd.to_datetime(df['Date'])
+
+    # Apply filters from sidebar
+    filtered_df = df[
+      (df['Date'] >= pd.to_datetime(start_date)) &
+      (df['Date'] <= pd.to_datetime(end_date)) &
+      (df['supplier_score'] >= min_score) &
+      (df['delay_days'] <= max_delay)
+    ]
     
     tab1, tab2, tab3, tab4 = st.tabs(["📈 Forecast", "⚠️ Risk", "📦 Inventory", "🗃️ Raw Data"])
        
     with tab1:
         st.subheader("Forecast Over Time with Confidence Interval")
         fig, ax = plt.subplots()
-        ax.plot(df['Date'], df['Forecast'], label='Forecast', color='blue')
+        ax.plot(filtered_df['Date'], filtered_df['Forecast'], label='Forecast', color='blue')
         
         # Confidence interval band (±20 units)
-        lower_bound = df['Forecast'] - 20
-        upper_bound = df['Forecast'] + 20
-        ax.fill_between(df['Date'], lower_bound, upper_bound, color='blue', alpha=0.2, label='Confidence Interval')
+        lower_bound = filtered_df['Forecast'] - 20
+        upper_bound = filtered_df['Forecast'] + 20
+        ax.fill_between(filtered_df['Date'], lower_bound, upper_bound, color='blue', alpha=0.2, label='Confidence Interval')
+       
         ax.set_title("Forecast Over Time")
         ax.set_xlabel("Date")
         ax.set_ylabel("Forecast")
@@ -60,10 +77,10 @@ if uploaded_file:
         show_risks = st.checkbox("Show Risk Markers", value=True)
 
         fig, ax = plt.subplots()
-        ax.plot(df['Date'], df['Forecast'], label='Forecast', color='blue')
+        ax.plot(filtered_df['Date'], filtered_df['Forecast'], label='Forecast', color='blue')
         
         if show_risks:
-            risk_points = df[df['risk_flag'] == 1]    
+            risk_points = filtered_df[filtered_df['risk_flag'] == 1]    
             ax.scatter(risk_points['Date'], risk_points['Forecast'], color='red',label='Risk', zorder=5)
        
         ax.set_title("Risk-Flagged Forecast")    
@@ -75,8 +92,8 @@ if uploaded_file:
     with tab3:
         st.subheader("Inventory vs Forecast")
         fig, ax = plt.subplots()
-        ax.plot(df['Date'], df['Forecast'], label='Forecast', color='blue')
-        ax.plot(df['Date'], df['inventory_level'], label='Inventory Level', color='green')
+        ax.plot(filtered_df['Date'], filtered_df['Forecast'], label='Forecast', color='blue')
+        ax.plot(filtered_df['Date'], filtered_df['inventory_level'], label='Inventory Level', color='green')
         ax.set_title("Inventory vs Forecast")
         ax.set_xlabel("Date")
         ax.set_ylabel("Value")
@@ -91,14 +108,11 @@ if uploaded_file:
     st.subheader("Download Forecast Data")
     csv = df.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="📥 Download CSV",
-        data=csv,
-        file_name="forecast_with_risk.csv",
-        mime="text/csv"
+    label="📥 Download CSV",
+    data=csv,
+    file_name="forecast_with_risk.csv",
+    mime="text/csv"
 
-        )               
-    
-
+    )               
 else:
-        st.info("Awaiting CSV upload...")
-
+    st.info("Awaiting CSV upload...")
