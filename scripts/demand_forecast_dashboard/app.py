@@ -53,7 +53,9 @@ if uploaded_file:
       (df['supplier_score'] >= min_score) &
       (df['delay_days'] <= max_delay)
     ]
-    
+    if filtered_df.empty:
+        st.warning("⚠️ No data matches the current filters. Try adjusting the sliders or date range.")
+
     tab1, tab2, tab3, tab4 = st.tabs(["📈 Forecast", "⚠️ Risk", "📦 Inventory", "🗃️ Raw Data"])
        
     with tab1:
